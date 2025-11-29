@@ -36,7 +36,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 (async function(){
-    const mdUrl = encodeURI('BASIC JOINS EXAMPLE.md');
+    const mdUrl = encodeURI('../markdowns/BASIC JOINS EXAMPLE.md');
     try{
         const res = await fetch(mdUrl);
         if(!res.ok){ document.getElementById('content').innerHTML = `<p style="color:red">Failed to load ${mdUrl}: ${res.status} ${res.statusText}</p>`; return; }

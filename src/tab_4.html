@@ -58,7 +58,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 (async function(){
-    const mdUrl = encodeURI('tab 4.md');
+    const mdUrl = encodeURI('../markdowns/tab 4.md');
     try{
         const res = await fetch(mdUrl);
         if(!res.ok){ document.getElementById('content').innerHTML = `<p style="color:red">Failed to load ${mdUrl}: ${res.status} ${res.statusText}</p>`; return; }
