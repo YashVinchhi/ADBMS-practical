@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Cyberpunk Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-purple: #bc13fe;
+            --neon-green: #0aff0a;
+            --dark-bg: #050505;
+            --card-bg: rgba(10, 15, 20, 0.65);
+            --grid-color: rgba(0, 243, 255, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        /* Moving 3D Grid Background */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background:
+                linear-gradient(transparent 0%, var(--dark-bg) 80%),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(180deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: perspective(500px) rotateX(60deg) scale(2);
+            transform-origin: top center;
+            animation: gridMove 2s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 40px; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glitch Title */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            font-size: 3.5rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan);
+            position: relative;
+            margin-bottom: 60px;
+            animation: glitch-anim 3s infinite alternate;
+        }
+
+        @keyframes glitch-anim {
+            0% { text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan); }
+            24% { text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan); }
+            25% { text-shadow: -2px 2px var(--neon-pink), 2px -2px var(--neon-cyan); transform: translate(2px, -2px); }
+            26% { text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan); transform: translate(0, 0); }
+            100% { text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan); }
+        }
+
+        /* 3D Card Styling */
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-left: 4px solid var(--neon-cyan);
+            backdrop-filter: blur(10px);
+            border-radius: 4px; /* Slight rounded corners */
+            padding: 25px;
+            margin-bottom: 40px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out, box-shadow 0.3s;
+            clip-path: polygon(
+                0 0,
+                100% 0,
+                100% calc(100% - 20px),
+                calc(100% - 20px) 100%,
+                0 100%
+            ); /* Cyberpunk corner cut */
+        }
+
+        .question-card:hover {
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-cyan);
+        }
+
+        .question-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+            transform: translateZ(20px); /* 3D depth */
+        }
+
+        .question-number {
+            background-color: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 4px 10px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+            box-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        /* Code Block - Terminal Style */
+        .code-wrapper {
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            border-radius: 4px;
+            margin-top: 15px;
+            transform: translateZ(30px); /* More 3D depth */
+            transition: border-color 0.3s;
+        }
+
+        .code-wrapper:hover {
+            border-color: var(--neon-green);
+        }
+
+        /* Scanline effect for code */
+        .code-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        pre {
+            margin: 0;
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--neon-green);
+            font-size: 1em;
+            text-shadow: 0 0 2px var(--neon-green);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-cyan);
+            border-radius: 4px;
+        }
+
+        /* Cyber Button */
+        .copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--neon-purple);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%, 0 15px);
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            background: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+            text-shadow: 0 0 5px white;
+        }
+
+        .copy-btn.copied {
+            background: var(--neon-green);
+            color: black;
+            font-weight: bold;
+        }
+
+        /* Decorative Logic Elements */
+        .deco-line {
+            position: absolute;
+            bottom: -5px;
+            right: 20px;
+            width: 100px;
+            height: 2px;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .container { margin: 20px auto; width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cyber-grid"></div>
+
+<div class="container">
+    <h1>TAB 2</h1>
+
+    <!-- Setup Block -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">00</span>
+            SYSTEM_INIT (SCHEMA SETUP)
+        </div>
+        <p style="color: #aaa; transform: translateZ(10px);">Execute initialization sequence to build database structure.</p>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">EXECUTE COPY</button>
+<pre><code>CREATE TABLE Student (
+    StudentID INT PRIMARY KEY,
+    StudentName VARCHAR(100),
+    Age INT,
+    Major VARCHAR(100),
+    FacultyID INT
+);
+
+CREATE TABLE Faculty (
+    FacultyID INT PRIMARY KEY,
+    FacultyName VARCHAR(100),
+    Department VARCHAR(100)
+);
+
+INSERT INTO Student (StudentID, StudentName, Age, Major, FacultyID) VALUES
+(1, 'Alice', 20, 'Computer Science', 101),
+(2, 'Bob', 22, 'Mechanical Engineering', 102),
+(3, 'Charlie', 21, 'Physics', 103),
+(4, 'David', 23, 'Mathematics', 104),
+(5, 'Eva', 22, 'Chemistry', 101);
+
+INSERT INTO Faculty (FacultyID, FacultyName, Department) VALUES
+(101, 'Dr. Smith', 'Computer Science'),
+(102, 'Dr. Johnson', 'Mechanical Engineering'),
+(103, 'Dr. Brown', 'Physics'),
+(104, 'Dr. White', 'Mathematics'),
+(105, 'Dr. Green', 'Chemistry');</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 1 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">01</span>
+            QUERY: Target Students matching Dr. Smith's Dept
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT StudentName
+FROM Student
+WHERE Major = (
+    SELECT Department
+    FROM Faculty
+    WHERE FacultyName = 'Dr. Smith'
+);</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">02</span>
+            QUERY: Identify Faculty with Youngest Student
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT f.FacultyName
+FROM Faculty f
+JOIN Student s ON f.FacultyID = s.FacultyID
+WHERE s.Age = (
+    SELECT MIN(Age) FROM Student
+);</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">03</span>
+            QUERY: Match Major with Faculty ID 103
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT StudentName
+FROM Student
+WHERE Major = (
+    SELECT Department
+    FROM Faculty
+    WHERE FacultyID = 103
+);</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">04</span>
+            QUERY: Detect Faculty with Zero Students
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT FacultyName
+FROM Faculty
+WHERE FacultyID NOT IN (
+    SELECT DISTINCT FacultyID FROM Student
+);</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">05</span>
+            QUERY: Filter Students > Avg Age
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT StudentName
+FROM Student
+WHERE Age > (
+    SELECT AVG(Age) FROM Student
+);</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">06</span>
+            QUERY: Locate Advisor for 'Charlie'
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT f.FacultyName
+FROM Faculty f
+JOIN Student s ON f.FacultyID = s.FacultyID
+WHERE s.StudentName = 'Charlie';</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">07</span>
+            QUERY: Students in same Dept as 'Bob'
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT StudentName
+FROM Student
+WHERE Major = (
+    SELECT Major
+    FROM Student
+    WHERE StudentName = 'Bob'
+);</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">08</span>
+            QUERY: Faculties with 'Chemistry' Students
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT DISTINCT f.FacultyName
+FROM Faculty f
+JOIN Student s ON f.FacultyID = s.FacultyID
+WHERE s.Major = 'Chemistry';</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">09</span>
+            QUERY: Advised by 'Mathematics' Dept
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT s.StudentName
+FROM Student s
+JOIN Faculty f ON s.FacultyID = f.FacultyID
+WHERE f.Department = 'Mathematics';</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question-card" data-tilt>
+        <div class="question-title">
+            <span class="question-number">10</span>
+            QUERY: Calc Avg Age for 'Computer Science'
+        </div>
+        <div class="code-wrapper">
+            <button class="copy-btn" onclick="copyToClipboard(this)">COPY CODE</button>
+<pre><code>SELECT AVG(Age) as AverageAge
+FROM Student
+WHERE Major = 'Computer Science';</code></pre>
+        </div>
+        <div class="deco-line"></div>
+    </div>
+
+</div>
+
+<script>
+    // Copy Functionality
+    function copyToClipboard(button) {
+        const codeBlock = button.parentElement.querySelector('code');
+        const textToCopy = codeBlock.innerText;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = button.textContent;
+            button.textContent = 'COPIED_';
+            button.classList.add('copied');
+
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            button.textContent = 'ERR_FAIL';
+        });
+    }
+
+    // 3D Tilt Effect Logic
+    const cards = document.querySelectorAll('.question-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            // Calculate mouse position relative to the card
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Calculate center of the card
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            // Calculate rotation values (Max 7 deg rotation)
+            const rotateX = ((y - centerY) / centerY) * -7;
+            const rotateY = ((x - centerX) / centerX) * 7;
+
+            // Apply style
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        // Reset on mouse leave
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+    });
+</script>
+
+</body>
+</html>
