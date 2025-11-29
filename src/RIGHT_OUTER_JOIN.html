@@ -5,32 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RIGHT OUTER JOIN.md</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <style>
-        :root { --neon-cyan:#00f3ff; --neon-pink:#ff00ff; --neon-purple:#bc13fe; --neon-green:#0aff0a; --dark-bg:#050505; --card-bg:rgba(10,15,20,0.65); --grid-color:rgba(0,243,255,0.15); }
-        *{box-sizing:border-box} body{font-family:'Rajdhani',sans-serif;background:var(--dark-bg);color:#e0e0e0;margin:0;padding:0;overflow-x:hidden;perspective:1000px}
-        .cyber-grid{position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(transparent 0%,var(--dark-bg)80%),linear-gradient(90deg,var(--grid-color)1px,transparent 1px),linear-gradient(180deg,var(--grid-color)1px,transparent 1px);background-size:40px 40px;transform:perspective(500px) rotateX(60deg) scale(2);transform-origin:top center;animation:gridMove 2s linear infinite;z-index:-1;pointer-events:none}
-        @keyframes gridMove{0%{background-position:0 0}100%{background-position:0 40px}}
-        .container{max-width:1000px;margin:50px auto;padding:20px;position:relative;z-index:1}
-        h1{font-family:'Orbitron',sans-serif;text-align:center;font-size:3.5rem;color:white;text-transform:uppercase;letter-spacing:5px;text-shadow:2px 2px var(--neon-pink),-2px -2px var(--neon-cyan);margin-bottom:40px;animation:glitch-anim 3s infinite alternate}
-        @keyframes glitch-anim{0%{text-shadow:2px 2px var(--neon-pink),-2px -2px var(--neon-cyan)}24%{text-shadow:2px 2px var(--neon-pink),-2px -2px var(--neon-cyan)}25%{text-shadow:-2px 2px var(--neon-pink),2px -2px var(--neon-cyan);transform:translate(2px,-2px)}26%{text-shadow:2px 2px var(--neon-pink),-2px -2px var(--neon-cyan);transform:translate(0,0)}100%{text-shadow:2px 2px var(--neon-pink),-2px -2px var(--neon-cyan)} }
-        .question-card{background:var(--card-bg);border:1px solid rgba(0,243,255,0.3);border-left:4px solid var(--neon-cyan);backdrop-filter:blur(10px);border-radius:4px;padding:20px;margin-bottom:28px;position:relative;transform-style:preserve-3d;transition:transform 0.1s ease-out,box-shadow 0.3s;clip-path:polygon(0 0,100% 0,100% calc(100% - 20px), calc(100% - 20px) 100%,0 100%)}
-        .question-card:hover{box-shadow:0 0 20px rgba(0,243,255,0.2),inset 0 0 10px rgba(0,243,255,0.1);border-color:var(--neon-cyan)}
-        .question-title{font-family:'Orbitron',sans-serif;font-size:1.05rem;color:var(--neon-cyan);margin-bottom:10px;display:flex;align-items:center;text-transform:uppercase}
-        .question-number{background:transparent;border:1px solid var(--neon-pink);color:var(--neon-pink);padding:4px 10px;margin-right:12px;font-weight:bold;font-size:0.85em;box-shadow:0 0 5px var(--neon-pink)}
-        .code-wrapper{position:relative;background-color:rgba(0,0,0,0.8);border:1px solid #333;border-radius:4px;margin-top:12px;transform:translateZ(12px);transition:border-color 0.3s}
-        .code-wrapper::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(rgba(18,16,16,0)50%,rgba(0,0,0,0.25)50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.02),rgba(0,0,255,0.03));background-size:100% 2px,3px 100%;pointer-events:none;z-index:2}
-        pre{margin:0;padding:18px;overflow-x:auto} code{font-family:'Share Tech Mono',monospace;color:var(--neon-green);font-size:0.95em;text-shadow:0 0 2px var(--neon-green)}
-        ::-webkit-scrollbar{width:8px;height:8px} ::-webkit-scrollbar-track{background:#000} ::-webkit-scrollbar-thumb{background:var(--neon-cyan);border-radius:4px}
-        .copy-btn{position:absolute;top:8px;right:8px;background:var(--neon-purple);border:none;color:white;padding:8px 16px;font-family:'Orbitron',sans-serif;font-size:0.8rem;letter-spacing:1px;cursor:pointer;clip-path:polygon(15px 0,100% 0,100% 100%,0 100%,0 15px);transition:all 0.2s;z-index:10}
-        .copy-btn:hover{background:var(--neon-pink);box-shadow:0 0 15px var(--neon-pink);text-shadow:0 0 5px white} .copy-btn.copied{background:var(--neon-green);color:black;font-weight:bold}
-        .deco-line{position:absolute;bottom:-5px;right:20px;width:100px;height:2px;background:var(--neon-cyan);box-shadow:0 0 10px var(--neon-cyan)}
-        @media (max-width:768px){h1{font-size:2rem}.container{margin:20px auto;width:95%}}
-    </style>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-<div class="cyber-grid"></div>
 <div class="container">
     <h1>RIGHT OUTER JOIN</h1>
+    <div id="sql-queries" aria-label="SQL queries"></div>
     <div id="content"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -43,21 +23,27 @@
         const md = await res.text();
         document.getElementById('content').innerHTML = marked.parse(md);
         const content = document.getElementById('content');
+        const sqlContainer = document.getElementById('sql-queries');
         const nodes = Array.from(content.childNodes);
         const newContent = document.createElement('div');
+
+        function isSqlCode(codeEl){ if(!codeEl) return false; const cls=(codeEl.className||'').toLowerCase(); if(cls.includes('language-sql')||cls.includes('lang-sql')) return true; const txt=codeEl.textContent||''; return /\bselect\b|\bfrom\b|\bwhere\b|\bjoin\b|\binsert\b|\bupdate\b|\bdelete\b/i.test(txt); }
+
         for(let i=0;i<nodes.length;i++){
             const node = nodes[i];
             if(node.nodeType===1 && /^H1|H2|H3|H4|H5|H6$/i.test(node.tagName)){
-                const card=document.createElement('section'); card.className='question-card'; const title=document.createElement('div'); title.className='question-title'; const num=document.createElement('span'); num.className='question-number'; num.textContent='Q'; title.appendChild(num); const titleText=document.createElement('span'); titleText.textContent=node.textContent; title.appendChild(titleText); card.appendChild(title); let j=i+1; let added=false; while(j<nodes.length && !(nodes[j].nodeType===1 && /^H1|H2|H3|H4|H5|H6$/i.test(nodes[j].nodeTagName))){ card.appendChild(nodes[j].cloneNode(true)); added=true; j++; } newContent.appendChild(card); if(added){ const deco=document.createElement('div'); deco.className='deco-line'; card.appendChild(deco);} i=j-1; }
+                const card=document.createElement('section'); card.className='question-card'; const title=document.createElement('div'); title.className='question-title'; const num=document.createElement('span'); num.className='question-number'; num.textContent='Q'; title.appendChild(num); const titleText=document.createElement('span'); titleText.textContent=node.textContent; title.appendChild(titleText); card.appendChild(title);
+                let j=i+1; let added=false; while(j<nodes.length && !(nodes[j].nodeType===1 && /^H1|H2|H3|H4|H5|H6$/i.test(nodes[j].tagName))){ const next=nodes[j].cloneNode(true); if(next.nodeType===1 && next.tagName==='PRE'){ const codeEl=next.querySelector('code'); if(isSqlCode(codeEl)){ const sqlEntry=document.createElement('div'); sqlEntry.className='sql-entry'; const sqlTitle=document.createElement('div'); sqlTitle.className='question-title'; const sNum=document.createElement('span'); sNum.className='question-number'; sNum.textContent='SQL'; sqlTitle.appendChild(sNum); const sText=document.createElement('span'); sText.textContent=(node.textContent||'SQL Query'); sqlTitle.appendChild(sText); sqlEntry.appendChild(sqlTitle); const sqlBlock=document.createElement('div'); sqlBlock.className='sql-block'; sqlBlock.appendChild(next); sqlEntry.appendChild(sqlBlock); sqlContainer.appendChild(sqlEntry); j++; continue; } }
+                card.appendChild(next); added=true; j++; } newContent.appendChild(card); if(added){ const deco=document.createElement('div'); deco.className='deco-line'; card.appendChild(deco);} i=j-1; }
             else if(node.nodeType===1 && node.tagName==='PRE'){
-                const card=document.createElement('section'); card.className='question-card'; const title=document.createElement('div'); title.className='question-title'; const num=document.createElement('span'); num.className='question-number'; num.textContent='CODE'; title.appendChild(num); const titleText=document.createElement('span'); titleText.textContent='Code Block'; title.appendChild(titleText); card.appendChild(title); card.appendChild(node.cloneNode(true)); const deco=document.createElement('div'); deco.className='deco-line'; card.appendChild(deco); newContent.appendChild(card);
-            } else { const wrapper=document.createElement('div'); wrapper.appendChild(node.cloneNode(true)); newContent.appendChild(wrapper); }
+                const codeContent=node.cloneNode(true); const codeEl=codeContent.querySelector('code'); if(isSqlCode(codeEl)){ const sqlEntry=document.createElement('div'); sqlEntry.className='sql-entry'; const sqlTitle=document.createElement('div'); sqlTitle.className='question-title'; const sNum=document.createElement('span'); sNum.className='question-number'; sNum.textContent='SQL'; sqlTitle.appendChild(sNum); const sText=document.createElement('span'); sText.textContent='SQL Query'; sqlTitle.appendChild(sText); sqlEntry.appendChild(sqlTitle); const sqlBlock=document.createElement('div'); sqlBlock.className='sql-block'; sqlBlock.appendChild(codeContent); sqlEntry.appendChild(sqlBlock); sqlContainer.appendChild(sqlEntry); } else { const card=document.createElement('section'); card.className='question-card'; const title=document.createElement('div'); title.className='question-title'; const num=document.createElement('span'); num.className='question-number'; num.textContent='CODE'; title.appendChild(num); const titleText=document.createElement('span'); titleText.textContent='Code Block'; title.appendChild(titleText); card.appendChild(title); card.appendChild(codeContent); const deco=document.createElement('div'); deco.className='deco-line'; card.appendChild(deco); newContent.appendChild(card);} }
+            else { const wrapper=document.createElement('div'); wrapper.appendChild(node.cloneNode(true)); newContent.appendChild(wrapper); }
         }
         content.innerHTML=''; content.appendChild(newContent);
-        document.querySelectorAll('.question-card pre code').forEach((codeBlock,idx)=>{ const pre=codeBlock.parentElement; const btn=document.createElement('button'); btn.className='copy-btn'; btn.textContent='COPY CODE'; btn.addEventListener('click',async ()=>{ try{ await navigator.clipboard.writeText(codeBlock.innerText); btn.textContent='COPIED_'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='COPY CODE'; btn.classList.remove('copied'); },1600);} catch(err){ alert('Copy failed. Serve via HTTP to allow clipboard access.'); } }); pre.style.position='relative'; pre.appendChild(btn); });
-        const cards=document.querySelectorAll('.question-card'); cards.forEach(card=>{ card.addEventListener('mousemove',(e)=>{ const rect=card.getBoundingClientRect(); const x=e.clientX-rect.left; const y=e.clientY-rect.top; const centerX=rect.width/2; const centerY=rect.height/2; const rotateX=((y-centerY)/centerY)*-7; const rotateY=((x-centerX)/centerX)*7; card.style.transform=`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`; }); card.addEventListener('mouseleave',()=>{ card.style.transform='perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)'; }); });
+        // static display only - no copy buttons, no animations
     } catch(err){ document.getElementById('content').innerHTML = `<pre style="color:red">${err}</pre><p>Tip: serve the folder via a local HTTP server (eg. <code>python -m http.server</code>) to allow fetching .md files.</p>`; }
 })();
 </script>
+<script src="../copy-enabled.js"></script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-# FULL OUTER JOIN Examples
 ###  37. Use FULL OUTER JOIN between OEHR_EMPLOYEES and OEHR_DEPARTMENTS to show all employees and all departments.
 ```SQL
 SELECT *

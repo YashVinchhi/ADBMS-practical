@@ -1,0 +1,101 @@
+/* Minimal, ChatGPT-like stylesheet for the ADBMS site
+   - Clean, centered layout similar to ChatGPT UI
+   - Distinct styling for SQL blocks (.sql-block / .sql-card)
+   - Keeps existing class names but updates colors/typography
+*/
+:root {
+    --bg: #f7f8fa; /* page background */
+    --surface: #ffffff; /* card background */
+    --muted: #6b7280;
+    --text: #0f1724;
+    --accent: #10a37f; /* ChatGPT-like accent */
+    --code-bg: #0f1724; /* dark code background for SQL blocks */
+    --shadow: 0 6px 18px rgba(15, 23, 36, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Centered content column like ChatGPT */
+.container { max-width: 850px; margin: 28px auto; padding: 20px; }
+
+header {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+}
+.brand-block { flex: 1; }
+
+h1 { font-size: 1.25rem; margin: 0; font-weight: 600; }
+.subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+.sys-stat { color: var(--muted); font-size: 0.9rem; }
+
+.controls { display: flex; gap: 12px; margin: 16px 0; align-items: center; }
+.search-wrapper { flex: 1; }
+input.search {
+    width: 100%; padding: 10px 12px; border: 1px solid #e6e9ee; border-radius: 8px;
+    background: #fff; color: var(--text);
+}
+input.search:focus { outline: none; box-shadow: 0 0 0 4px rgba(16,163,127,0.06); }
+
+button.btn {
+    background: var(--accent); color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer;
+}
+button.btn:hover { opacity: 0.95; }
+
+/* Grid of link cards will appear as compact cards
+   Keep responsive grid but centered like chat interface */
+.grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.link-card { background: var(--surface); border: 1px solid #eef2f5; padding: 14px; border-radius: 10px; box-shadow: var(--shadow); text-decoration: none; color: inherit; }
+.link-title { font-weight: 600; margin-bottom: 6px; }
+.link-sub { color: var(--muted); font-size: 0.95rem; }
+.card-deco { font-size: 0.8rem; color: var(--muted); }
+
+/* Question / message cards styled like ChatGPT messages */
+.question-card { background: var(--surface); border: 1px solid #eef2f5; padding: 16px; border-radius: 12px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.question-title { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-weight:600; color:var(--text); }
+.question-number { background: #f7faf8; border: 1px solid #eef2f5; padding: 4px 8px; border-radius: 8px; font-size: 0.85rem; color: var(--muted); }
+
+/* Code wrapper and default code appearance (light) */
+.code-wrapper { background: #fbfbfb; border: 1px solid #f0f2f4; padding: 12px; border-radius: 8px; margin-top: 10px; overflow: auto; }
+pre { margin: 0; padding: 12px; background: transparent; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; font-size: 0.95rem; color: #111; border-radius: 6px; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; color: #0b5fff; }
+
+/* Copy button inside pre */
+.copy-btn { position: absolute; top: 8px; right: 8px; padding: 6px 8px; border-radius: 8px; border: 1px solid #e6e6e6; background: #fff; color: var(--text); font-size: 0.8rem; cursor: pointer; }
+.copy-btn.copied { background: #e6ffed; border-color: #c6f6d5; color: #0b3f20; }
+
+/* SQL blocks get special treatment: dark code card with accent left border */
+.sql-card { position: relative; }
+.sql-block { border-left: 4px solid var(--accent); border-radius: 8px; overflow: hidden; margin-top: 10px; }
+.sql-block pre { background: var(--code-bg); color: #e6f6ee; padding: 16px; border-radius: 6px; font-size: 0.95rem; }
+.sql-block code { color: #e6f6ee; }
+
+/* SQL queries container (dedicated area) */
+#sql-queries { margin-bottom: 18px; display: flex; flex-direction: column; gap: 12px; }
+.sql-entry { background: var(--surface); border-left: 4px solid var(--accent); padding: 12px; border-radius: 10px; box-shadow: var(--shadow); }
+.sql-entry .question-title { margin-bottom: 8px; }
+.sql-entry .sql-block pre { background: var(--code-bg); color: #e6f6ee; padding: 12px; border-radius: 6px; margin: 0; overflow-x: auto; }
+.sql-entry .sql-block code { color: #e6f6ee; }
+
+/* Ensure code blocks are non-interactive UI elements (static display) */
+/* removed pointer-events:none so copy buttons remain clickable; code blocks remain visually static */
+
+/* Footer / social */
+footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid #eef2f5; text-align: center; color: var(--muted); }
+.social-bar { display:flex; gap:10px; justify-content:center; margin: 12px 0; }
+.social-link { padding: 8px 12px; border-radius: 8px; border: 1px solid #eef2f5; background: #fff; color: var(--text); text-decoration: none; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 16px; }
+    .grid-layout { grid-template-columns: 1fr; }
+}
